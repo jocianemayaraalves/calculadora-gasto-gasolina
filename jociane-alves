@@ -1,0 +1,60 @@
+def obter_consumo():
+    print("Informe o consumo do carro (km por litro):")
+    cidade = float(input("Consumo na cidade: "))
+    estrada = float(input("Consumo na BR (estrada): "))
+    misto = float(input("Consumo em trajeto misto: "))
+    return {"cidade": cidade, "estrada": estrada, "misto": misto}
+
+def calcular_gasto(km_total, tipo_trajeto, consumo, preco_litro):
+    km_por_litro = consumo[tipo_trajeto]
+    litros_necessarios = km_total / km_por_litro
+    custo = litros_necessarios * preco_litro
+    return litros_necessarios, custo
+
+def main():
+    print("=== Calculadora de Gastos com Gasolina ===\n")
+    consumo = obter_consumo()
+
+    preco_gasolina = float(input("\nDigite o valor do litro da gasolina (R$): "))
+
+    trajetos = []
+    while True:
+        print("\nNovo trajeto:")
+        nome_trajeto = input("Nome do local ou descrição do trajeto: ")
+        km_ida = float(input("Km de ida: "))
+        km_volta = float(input("Km de volta: "))
+        tipo = input("Tipo do trajeto (cidade / estrada / misto): ").strip().lower()
+
+        km_total = km_ida + km_volta
+        litros, custo = calcular_gasto(km_total, tipo, consumo, preco_gasolina)
+
+        trajetos.append({
+            "nome": nome_trajeto,
+            "km_total": km_total,
+            "tipo": tipo,
+            "litros": litros,
+            "custo": custo
+        })
+
+        continuar = input("Deseja adicionar outro trajeto? (s/n): ").strip().lower()
+        if continuar != 's':
+            break
+
+    print("\n=== Relatório de Gastos ===")
+    total_km = 0
+    total_custo = 0
+    for trajeto in trajetos:
+        print(f"\nTrajeto: {trajeto['nome']}")
+        print(f"Distância total: {trajeto['km_total']} km")
+        print(f"Tipo: {trajeto['tipo']}")
+        print(f"Litros consumidos: {trajeto['litros']:.2f} L")
+        print(f"Gasto estimado: R$ {trajeto['custo']:.2f}")
+        total_km += trajeto['km_total']
+        total_custo += trajeto['custo']
+
+    print("\n=== Resumo Final ===")
+    print(f"Total de quilômetros rodados: {total_km:.2f} km")
+    print(f"Gasto total estimado com gasolina: R$ {total_custo:.2f}")
+
+if __name__ == "__main__":
+    main()
