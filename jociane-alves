@@ -11,11 +11,23 @@ def calcular_gasto(km_total, tipo_trajeto, consumo, preco_litro):
     custo = litros_necessarios * preco_litro
     return litros_necessarios, custo
 
+def ler_preco_gasolina():
+    while True:
+        preco_str = input("\nDigite o valor do litro da gasolina (R$): ").replace(",", ".").strip()
+        try:
+            preco = float(preco_str)
+            if preco <= 0:
+                print("Por favor, digite um valor maior que zero.")
+            else:
+                return preco
+        except ValueError:
+            print("Entrada inválida. Digite um número válido, usando vírgula ou ponto para casas decimais (ex: 5,49 ou 5.49).")
+
 def main():
     print("=== Calculadora de Gastos com Gasolina ===\n")
     consumo = obter_consumo()
 
-    preco_gasolina = float(input("\nDigite o valor do litro da gasolina (R$): "))
+    preco_gasolina = ler_preco_gasolina()
 
     trajetos = []
     while True:
@@ -24,6 +36,10 @@ def main():
         km_ida = float(input("Km de ida: "))
         km_volta = float(input("Km de volta: "))
         tipo = input("Tipo do trajeto (cidade / estrada / misto): ").strip().lower()
+
+        if tipo not in ["cidade", "estrada", "misto"]:
+            print("Tipo de trajeto inválido. Use apenas: cidade, estrada ou misto.")
+            continue
 
         km_total = km_ida + km_volta
         litros, custo = calcular_gasto(km_total, tipo, consumo, preco_gasolina)
