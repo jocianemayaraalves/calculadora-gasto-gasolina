@@ -23,31 +23,57 @@ def ler_preco_gasolina():
         except ValueError:
             print("Entrada inválida. Digite um número válido, usando vírgula ou ponto para casas decimais (ex: 5,49 ou 5.49).")
 
+def montar_trajeto_completo():
+    pontos = []
+    print("\nMontagem do trajeto:")
+    partida = input("Informe o ponto de partida: ")
+    pontos.append(partida)
+
+    while True:
+        intermediario = input("Adicionar ponto intermediário (ou pressione Enter para pular): ").strip()
+        if intermediario == "":
+            break
+        pontos.append(intermediario)
+
+    chegada = input("Informe o ponto final (chegada): ")
+    pontos.append(chegada)
+
+    distancias = []
+    for i in range(len(pontos) - 1):
+        while True:
+            try:
+                distancia = float(input(f"Distância de {pontos[i]} até {pontos[i + 1]} (km): "))
+                distancias.append(distancia)
+                break
+            except ValueError:
+                print("Por favor, insira uma distância válida (número).")
+
+    return pontos[0], pontos[-1], pontos[1:-1], sum(distancias)
+
 def main():
     print("=== Calculadora de Gastos com Gasolina ===\n")
     consumo = obter_consumo()
-
     preco_gasolina = ler_preco_gasolina()
 
     trajetos = []
+
     while True:
         print("\nNovo trajeto:")
-        partida = input("Local de partida: ")
-        chegada = input("Local de chegada: ")
-        km_ida = float(input("Km de ida: "))
-        km_volta = float(input("Km de volta: "))
+
+        partida, chegada, intermediarios, km_ida = montar_trajeto_completo()
         tipo = input("Tipo do trajeto (cidade / estrada / misto): ").strip().lower()
 
         if tipo not in ["cidade", "estrada", "misto"]:
             print("Tipo de trajeto inválido. Use apenas: cidade, estrada ou misto.")
             continue
 
-        km_total = km_ida + km_volta
+        km_total = km_ida * 2  # Ida e volta
         litros, custo = calcular_gasto(km_total, tipo, consumo, preco_gasolina)
 
         trajetos.append({
             "partida": partida,
             "chegada": chegada,
+            "intermediarios": intermediarios,
             "km_total": km_total,
             "tipo": tipo,
             "litros": litros,
@@ -59,17 +85,18 @@ def main():
             break
 
     print("\n=== Relatório de Gastos ===")
-    print(f"\n{'Partida':<15} {'Chegada':<15} {'Km Ida e Volta':>18} {'Gasto Total (R$)':>18}")
-    print("-" * 70)
+    print(f"\n{'Partida':<15} {'Intermediários':<30} {'Chegada':<15} {'Km Ida+Volta':>14} {'Gasto (R$)':>12}")
+    print("-" * 95)
     total_km = 0
     total_custo = 0
     for trajeto in trajetos:
-        print(f"{trajeto['partida']:<15} {trajeto['chegada']:<15} {trajeto['km_total']:>18.2f} {trajeto['custo']:>18.2f}")
+        intermediarios = " → ".join(trajeto["intermediarios"]) if trajeto["intermediarios"] else "-"
+        print(f"{trajeto['partida']:<15} {intermediarios:<30} {trajeto['chegada']:<15} {trajeto['km_total']:>14.2f} {trajeto['custo']:>12.2f}")
         total_km += trajeto['km_total']
         total_custo += trajeto['custo']
 
-    print("-" * 70)
-    print(f"{'TOTAL':<30} {total_km:>18.2f} {total_custo:>18.2f}")
+    print("-" * 95)
+    print(f"{'TOTAL':<60} {total_km:>14.2f} {total_custo:>12.2f}")
 
 if __name__ == "__main__":
     main()
