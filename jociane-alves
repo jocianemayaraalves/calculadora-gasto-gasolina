@@ -32,7 +32,8 @@ def main():
     trajetos = []
     while True:
         print("\nNovo trajeto:")
-        nome_trajeto = input("Nome do local ou descrição do trajeto: ")
+        partida = input("Local de partida: ")
+        chegada = input("Local de chegada: ")
         km_ida = float(input("Km de ida: "))
         km_volta = float(input("Km de volta: "))
         tipo = input("Tipo do trajeto (cidade / estrada / misto): ").strip().lower()
@@ -45,7 +46,8 @@ def main():
         litros, custo = calcular_gasto(km_total, tipo, consumo, preco_gasolina)
 
         trajetos.append({
-            "nome": nome_trajeto,
+            "partida": partida,
+            "chegada": chegada,
             "km_total": km_total,
             "tipo": tipo,
             "litros": litros,
@@ -57,20 +59,17 @@ def main():
             break
 
     print("\n=== Relatório de Gastos ===")
+    print(f"\n{'Partida':<15} {'Chegada':<15} {'Km Ida e Volta':>18} {'Gasto Total (R$)':>18}")
+    print("-" * 70)
     total_km = 0
     total_custo = 0
     for trajeto in trajetos:
-        print(f"\nTrajeto: {trajeto['nome']}")
-        print(f"Distância total: {trajeto['km_total']} km")
-        print(f"Tipo: {trajeto['tipo']}")
-        print(f"Litros consumidos: {trajeto['litros']:.2f} L")
-        print(f"Gasto estimado: R$ {trajeto['custo']:.2f}")
+        print(f"{trajeto['partida']:<15} {trajeto['chegada']:<15} {trajeto['km_total']:>18.2f} {trajeto['custo']:>18.2f}")
         total_km += trajeto['km_total']
         total_custo += trajeto['custo']
 
-    print("\n=== Resumo Final ===")
-    print(f"Total de quilômetros rodados: {total_km:.2f} km")
-    print(f"Gasto total estimado com gasolina: R$ {total_custo:.2f}")
+    print("-" * 70)
+    print(f"{'TOTAL':<30} {total_km:>18.2f} {total_custo:>18.2f}")
 
 if __name__ == "__main__":
     main()
